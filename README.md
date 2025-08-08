@@ -40,3 +40,34 @@ returning false the following entry needs to be made to your projects file.
     </ProjectReference>
   </ItemGroup>
 ```
+
+### Publishing the Plugin
+The plugin is built as a ZIP file with all the components required to run the plugin.
+
+To do this you need to edit the project file of your plugin project and add the following properties:
+```xml
+
+    <PropertyGroup>
+        ....
+        .... Existing properties
+        ....
+        <PackageDir Condition="'$(PackageDir)' == ''">$([System.IO.Path]::Combine($(OutputPath),'package'))/</PackageDir>
+	    <PackagePath> c:\plugins\API.zip</PackagePath>
+    </PropertyGroup>
+
+	<Target Name="Package" DependsOnTargets="Publish">
+		<MakeDir Directories="$(PackageDir)" />
+		<ZipDirectory Overwrite="true" SourceDirectory="$(MSBuildProjectDirectory)/$(PublishDir)" DestinationFile="$(PackagePath)" />
+	</Target>
+	<Target Name="PackageClean" AfterTargets="Clean">
+		<Delete Files="$(PackagePath)" />
+	</Target>
+  ```
+  Now on your command line you can run the following command to build and package your plugin:
+  ```bash
+  dotnet publish /t:Package
+  ```
+  You can also add the configuration for example:
+  ```bash 
+    dotnet publish /t:Package -c Release
+  ```
