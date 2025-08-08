@@ -6,7 +6,17 @@ namespace PluginBase
 {
     public partial class InfoPage : UserControl , IInfo
     {
-        public Image Icon { set => pictureBox1.BackgroundImage = value ?? Resources.red; }
+        public Image? Icon
+        {
+            set
+            {
+                if (pictureBox1 is null)
+                {
+                    return;
+                }
+                pictureBox1.BackgroundImage = value ??  Resources.red ;
+            }
+        }
         public new string Name { set => pName.Text = value; get => pName.Text; }
         public string Version { set => pVersion.Text = value; get => pVersion.Text; }
         public string Description { set => pDescription.Text = value; get => pDescription.Text; }

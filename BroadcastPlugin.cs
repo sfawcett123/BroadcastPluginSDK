@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using PluginBase.Properties;
+using System.CodeDom;
 using System.Configuration;
 using System.Diagnostics;
 using System.Reflection;
@@ -13,7 +14,7 @@ namespace PluginBase
         public virtual string Name {  get => _infoPage.Name ; set => _infoPage.Name = value; }
         public virtual string Description { get => _infoPage.Description; set => _infoPage.Description = value; }
         public virtual string Stanza => "base";
-        public virtual InfoPage? InfoPage { get => _infoPage; set => _infoPage = value; } 
+        public virtual InfoPage? InfoPage { get => _infoPage; set => _infoPage = value ?? throw new NullReferenceException(); } 
         public virtual MainIcon MainIcon { get; }
 
         private Image? icon = Resources.red;
