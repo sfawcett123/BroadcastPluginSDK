@@ -2,17 +2,22 @@
 
 namespace PluginBase
 {
-    public class PluginEventArgs
+
+    public class PluginData : Dictionary<string, string> 
     {
-        public Image? Icon = null ;
-        public string Name { get; set; } = string.Empty;
+        
     }
-    public interface IInfo
+
+    public interface IProvider
     {
-        public string Version { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public Image? Icon {  set; }
+        public event EventHandler<PluginData> DataReceived;
+    }
+
+    public interface ICache
+    {
+        public IEnumerable<KeyValuePair<string, string>> Read(List<string> values);
+        public void Write( PluginData data );
+        public void Clear();
     }
 
     public  interface IPlugin 
@@ -21,7 +26,7 @@ namespace PluginBase
         public string Name { get; }
         public string Description { get; }
         public string Stanza { get;}
-        public InfoPage? InfoPage { get; set; }
+        public UserControl? InfoPage { get; set; }
         public bool AttachConfiguration<T>(T configuration);
         public void Start();
         public MainIcon MainIcon { get; }

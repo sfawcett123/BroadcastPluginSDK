@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace PluginBase
 {
-    public partial class InfoPage : UserControl , IInfo
+    public partial class InfoPage : UserControl 
     {
         public Image? Icon
         {

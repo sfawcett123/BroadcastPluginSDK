@@ -1,25 +1,23 @@
 ﻿using Microsoft.Extensions.Configuration;
 using PluginBase.Properties;
-using System.CodeDom;
-using System.Configuration;
 using System.Diagnostics;
 using System.Reflection;
-using System.Xml.Linq;
 
 namespace PluginBase
 {
     public abstract class BroadcastPlugin : IPlugin 
     {
-        public string Version { get => _infoPage.Version; set => _infoPage.Version = value; }
-        public virtual string Name {  get => _infoPage.Name ; set => _infoPage.Name = value; }
-        public virtual string Description { get => _infoPage.Description; set => _infoPage.Description = value; }
+
+        public virtual string Version { get => ((InfoPage)_infoPage).Version; set => ((InfoPage)_infoPage).Version = value; }
+        public virtual string Name {  get => ((InfoPage)_infoPage).Name ; set => ((InfoPage)_infoPage).Name = value; }
+        public virtual string Description { get => ((InfoPage )_infoPage).Description; set => ((InfoPage)_infoPage).Description = value; }
         public virtual string Stanza => "base";
-        public virtual InfoPage? InfoPage { get => _infoPage; set => _infoPage = value ?? throw new NullReferenceException(); } 
+        public virtual UserControl? InfoPage { get => _infoPage; set => _infoPage = value ?? throw new NullReferenceException(); } 
         public virtual MainIcon MainIcon { get; }
 
         private Image? icon = Resources.red;
         private IConfiguration _configuration;
-        protected InfoPage _infoPage;
+        private UserControl _infoPage = new InfoPage();
 
         protected IConfiguration? Configuration
         {
@@ -38,9 +36,9 @@ namespace PluginBase
                 if (MainIcon != null)
                 {
                     MainIcon.Icon = value;
-                    if (_infoPage !=  null)
+                    if (_infoPage != null)
                     {
-                        _infoPage.Icon = value; // Update InfoPage icon if it exists
+                        if (_infoPage is InfoPage x) x.Icon = value; // Update InfoPage icon if it exists
                     }
                 }
             }
@@ -49,8 +47,7 @@ namespace PluginBase
         protected BroadcastPlugin()
         {
           MainIcon = new MainIcon( this , Icon);
-          _infoPage = new InfoPage();
-          _infoPage.Icon = Icon; // Set the initial icon for InfoPage
+          if( _infoPage is InfoPage x ) x.Icon = Icon; // Set the initial icon for InfoPage
           Name = "Base Plugin";
           Description = "This is a base plugin for the Broadcast system.";
           Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "1.0.0";
