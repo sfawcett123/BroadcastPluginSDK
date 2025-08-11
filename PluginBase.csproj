@@ -9,16 +9,11 @@
     <Platforms>AnyCPU;x86;x64</Platforms>
     <Title>Broadcast Plugin SDK</Title>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageIcon>airplane.png</PackageIcon>
+    <PackageIcon>Resources\airplane.png</PackageIcon>
     <PackageProjectUrl>https://github.com/sfawcett123/BroadcastPluginSDK</PackageProjectUrl>
     <RepositoryUrl>https://github.com/sfawcett123/BroadcastPluginSDK</RepositoryUrl>
 	  
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="PluginBase.1.0.0.nupkg" />
-    <None Remove="PluginBase.6666.0.0.nupkg" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.7" />
