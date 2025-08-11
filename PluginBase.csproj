@@ -7,6 +7,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
     <Platforms>AnyCPU;x86;x64</Platforms>
+    <Title>Broadcast Plugin SDK</Title>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>airplane.png</PackageIcon>
+    <PackageProjectUrl>https://github.com/sfawcett123/BroadcastPluginSDK</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/sfawcett123/BroadcastPluginSDK</RepositoryUrl>
 	  
   </PropertyGroup>
 
@@ -38,6 +43,10 @@
     <None Update="README.md">
       <PackagePath>\</PackagePath>
       <Pack>True</Pack>
+    </None>
+    <None Update="Resources\airplane.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 
