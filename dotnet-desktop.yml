@@ -60,22 +60,24 @@ jobs:
       id: get_version
       if: github.event_name == 'release'
       uses: jannemattila/get-version-from-tag@v4
-      
+     
+    - name: Ensure output directory exists
+      run: |
+           New-Item -ItemType Directory -Force -Path "${{ env.OUTPUT }}"
+
     - name: Get Version (release)
       if: github.event_name == 'release'
       shell: bash
       run: |
-         NuGetDirectory=${OUTPUT}
          VERSION=$(echo "${{ steps.get_version.outputs.version }}")
-         dotnet pack --configuration Release -p PackageVersion=${VERSION}
+         dotnet pack --configuration Release -p PackageVersion=${VERSION} --output "${env.OUTPUT}"
 
     - name: Get Version (none release)
       if: github.event_name != 'release'
       shell: bash
       run: |
-         NuGetDirectory=${OUTPUT}
          VERSION=$(date +%s) # Use current timestamp as version
-         dotnet pack --configuration Release -p PackageVersion=${VERSION}
+         dotnet pack --configuration Release -p PackageVersion=${VERSION} --output "${env.OUTPUT}"
 
     # Publish the NuGet package as an artifact, so they can be used in the following jobs
     - name: Upload package
@@ -84,7 +86,7 @@ jobs:
         name: nuget
         if-no-files-found: error
         retention-days: 7
-        path: ${OUTPUT}\nuget\*.nupkg
+        path: ${{ env.OUTPUT }}/nuget/*.nupkg
 
 
   deploy:
