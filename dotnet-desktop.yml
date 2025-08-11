@@ -81,7 +81,7 @@ jobs:
         name: nuget
         if-no-files-found: error
         retention-days: 7
-        path: **/*.nupkg
+        path: .\BroadcastPluginSDK\nuget\*.nupkg
 
 
   deploy:
