@@ -1,8 +1,8 @@
-﻿using PluginBase.Properties;
+﻿using BroadcastPluginSDK.Properties;
 using System.Reflection.Metadata.Ecma335;
 using System.Windows.Forms;
 
-namespace PluginBase
+namespace BroadcastPluginSDK
 {
     public partial class InfoPage : UserControl 
     {

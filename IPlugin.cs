@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace PluginBase
+namespace BroadcastPluginSDK
 {
 
     public class PluginData : Dictionary<string, string> 

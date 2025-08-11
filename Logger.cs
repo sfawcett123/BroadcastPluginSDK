@@ -1,4 +1,4 @@
-﻿namespace PluginBase
+﻿namespace BroadcastPluginSDK
 {
     public static class Logger
     {

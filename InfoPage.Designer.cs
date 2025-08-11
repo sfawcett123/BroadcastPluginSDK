@@ -1,4 +1,4 @@
-﻿namespace PluginBase
+﻿namespace BroadcastPluginSDK
 {
     partial class InfoPage
     {

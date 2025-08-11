@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
-using PluginBase.Properties;
+using BroadcastPluginSDK.Properties;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace PluginBase
+namespace BroadcastPluginSDK
 {
     public abstract class BroadcastPlugin : IPlugin 
     {
