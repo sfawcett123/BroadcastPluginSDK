@@ -16,7 +16,7 @@ on:
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: true
-  OUTPUT: ${{ github.workspace }}\artifacts
+  NuGetDirectory: ${{ github.workspace }}\artifacts
 
 defaults:
   run:
@@ -63,21 +63,21 @@ jobs:
      
     - name: Ensure output directory exists
       run: |
-           New-Item -ItemType Directory -Force -Path "${{ env.OUTPUT }}"
+           New-Item -ItemType Directory -Force -Path "${{ env.NuGetDirectory }}"
 
     - name: Get Version (release)
       if: github.event_name == 'release'
       shell: bash
       run: |
          VERSION=$(echo "${{ steps.get_version.outputs.version }}")
-         dotnet pack --configuration Release -p PackageVersion=${VERSION} --output "${env.OUTPUT}"
+         dotnet pack --configuration Release -p:PackageVersion=${VERSION} --output "${NuGetDirectory}"
 
     - name: Get Version (none release)
       if: github.event_name != 'release'
       shell: bash
       run: |
          VERSION=$(date +%s) # Use current timestamp as version
-         dotnet pack --configuration Release -p PackageVersion=${VERSION} --output "${env.OUTPUT}"
+         dotnet pack --configuration Release -p:PackageVersion=${VERSION} --output "${NuGetDirectory}"
 
     # Publish the NuGet package as an artifact, so they can be used in the following jobs
     - name: Upload package
@@ -86,7 +86,7 @@ jobs:
         name: nuget
         if-no-files-found: error
         retention-days: 7
-        path: ${{ env.OUTPUT }}/nuget/*.nupkg
+        path: ${{ env.NuGetDirectory }}/nuget/*.nupkg
 
 
   deploy:
