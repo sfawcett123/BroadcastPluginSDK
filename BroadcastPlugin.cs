@@ -47,13 +47,31 @@ namespace BroadcastPluginSDK
 
         public string FilePath { get { return filePath;  }  set { filePath = value; } }
 
+        public Assembly derivedAssembly {  get => this.GetType().Assembly; }
+
+        private string GetAssemblyMetadata(string key)
+        { 
+            return derivedAssembly
+                .GetCustomAttributes<AssemblyMetadataAttribute>()
+                .FirstOrDefault(attr => attr.Key == key)
+                ?.Value;
+        }
+
+        public string RepositoryUrl { 
+            get
+            {
+                return GetAssemblyMetadata("RepositoryUrl");
+            }    
+        
+        }
+
         protected BroadcastPlugin()
         {
           MainIcon = new MainIcon( this , Icon);
           if( _infoPage is InfoPage x ) x.Icon = Icon; // Set the initial icon for InfoPage
           Name = "Base Plugin";
           Description = "This is a base plugin for the Broadcast system.";
-          Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "1.0.0";
+          Version = derivedAssembly.GetName().Version?.ToString() ?? "1.0.0";
           _configuration = new ConfigurationBuilder()
                 .AddInMemoryCollection() // Start with an empty configuration
                 .Build();

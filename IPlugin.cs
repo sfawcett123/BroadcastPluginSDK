@@ -30,6 +30,7 @@ namespace BroadcastPluginSDK
         public string FilePath { get; set;  }
         public bool AttachConfiguration<T>(T configuration);
         public void Start();
+        public string RepositoryUrl { get; }
         public MainIcon MainIcon { get; }
         
         event EventHandler Click;
