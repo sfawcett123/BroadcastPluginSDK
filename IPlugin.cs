@@ -27,6 +27,7 @@ namespace BroadcastPluginSDK
         public string Description { get; }
         public string Stanza { get;}
         public UserControl? InfoPage { get; set; }
+        public string FilePath { get; set;  }
         public bool AttachConfiguration<T>(T configuration);
         public void Start();
         public MainIcon MainIcon { get; }

@@ -18,6 +18,7 @@ namespace BroadcastPluginSDK
         private Image? icon = Resources.red;
         private IConfiguration _configuration;
         private UserControl _infoPage = new InfoPage();
+        private string filePath = string.Empty;
 
         protected IConfiguration? Configuration
         {
@@ -43,6 +44,8 @@ namespace BroadcastPluginSDK
                 }
             }
         }
+
+        public string FilePath { get { return filePath;  }  set { filePath = value; } }
 
         protected BroadcastPlugin()
         {
