@@ -70,6 +70,7 @@
             // 
             // pDescription
             // 
+            pDescription.BorderStyle = BorderStyle.None;
             pDescription.Enabled = false;
             pDescription.Location = new Point(79, 319);
             pDescription.Multiline = true;

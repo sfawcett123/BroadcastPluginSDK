@@ -14,6 +14,10 @@
     <RepositoryUrl>https://github.com/sfawcett123/BroadcastPluginSDK</RepositoryUrl>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>Steven Fawcett</Authors>
+    <Company>Steve Fawcett</Company>
+    <Copyright>Copyright © 2025 Steven Fawcett, All Rights Reserved</Copyright>
 	  
   </PropertyGroup>
 
