@@ -71,3 +71,24 @@ To do this you need to edit the project file of your plugin project and add the 
   ```bash 
     dotnet publish /t:Package -c Release
   ```
+
+## Development
+
+When changing the plugin SDK you may want to deliver the local (debug) version from a project dependancy and the (Release) version frp, the nuget package.
+
+```
+	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
+		<ProjectReference Include="..\BroadcastPluginSDK\BroadcastPluginSDK.csproj" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(Configuration)' == 'Release'">
+		<PackageReference Include="BroadcastPluginSDK" Version="1.0.4" />
+	</ItemGroup>
+ ```
+
+ Then it is possible to build manually or via the GUI:
+
+ ```
+ dotnet build --configuration:Debug --target:Package -p:OutputDirectory=c:\Plugins\ -p:Version=0.0.3
+ dotnet build --configuration:Release --target:Package -p:OutputDirectory=c:\Plugins\ -p:Version=0.0.3
+ ```

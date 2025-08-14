@@ -7,7 +7,6 @@ namespace BroadcastPluginSDK
 {
     public abstract class BroadcastPlugin : IPlugin 
     {
-
         public virtual string Version { get => ((InfoPage)_infoPage).Version; set => ((InfoPage)_infoPage).Version = value; }
         public virtual string Name {  get => ((InfoPage)_infoPage).Name ; set => ((InfoPage)_infoPage).Name = value; }
         public virtual string Description { get => ((InfoPage )_infoPage).Description; set => ((InfoPage)_infoPage).Description = value; }
@@ -15,69 +14,62 @@ namespace BroadcastPluginSDK
         public virtual UserControl? InfoPage { get => _infoPage; set => _infoPage = value ?? throw new NullReferenceException(); } 
         public virtual MainIcon MainIcon { get; }
 
-        private Image? icon = Resources.red;
+        private Image? _icon = Resources.red;
         private IConfiguration _configuration;
         private UserControl _infoPage = new InfoPage();
-        private string filePath = string.Empty;
 
         protected IConfiguration? Configuration
         {
             get => _configuration;
-            set => _configuration = value  ?? throw new ArgumentNullException("Mandatory parameter", nameof(IConfiguration));
+            set => _configuration = value  ?? throw new ArgumentNullException( "Mandatory Parameter",  nameof(IConfiguration));
         }
 
         public virtual Image Icon
         {
-            get => icon ?? Resources.red;
+            get => _icon ?? Resources.red;
             set
             {
-                if (value == null) return;
-
-                icon = value;
-                if (MainIcon != null)
+                _icon = value;
+                MainIcon.Icon = value;
+                if ( _infoPage is InfoPage x) 
                 {
-                    MainIcon.Icon = value;
-                    if (_infoPage != null)
-                    {
-                        if (_infoPage is InfoPage x) x.Icon = value; // Update InfoPage icon if it exists
-                    }
+                    x.Icon = value; // Update InfoPage _icon if it exists
                 }
             }
         }
 
-        public string FilePath { get { return filePath;  }  set { filePath = value; } }
+        public string FilePath { get; set; } = string.Empty;
 
-        public Assembly derivedAssembly {  get => this.GetType().Assembly; }
+        public Assembly DerivedAssembly {  get => this.GetType().Assembly; }
 
-        private string GetAssemblyMetadata(string key)
+        private string? GetAssemblyMetadata(string key)
         { 
-            return derivedAssembly
+            return DerivedAssembly
                 .GetCustomAttributes<AssemblyMetadataAttribute>()
                 .FirstOrDefault(attr => attr.Key == key)
                 ?.Value;
         }
 
         public string RepositoryUrl { 
-            get
-            {
-                return GetAssemblyMetadata("RepositoryUrl");
-            }    
+            get => GetAssemblyMetadata("RepositoryUrl") ?? String.Empty ;
         
         }
-
         protected BroadcastPlugin()
         {
-          MainIcon = new MainIcon( this , Icon);
-          if( _infoPage is InfoPage x ) x.Icon = Icon; // Set the initial icon for InfoPage
-          Name = "Base Plugin";
-          Description = "This is a base plugin for the Broadcast system.";
-          Version = derivedAssembly.GetName().Version?.ToString() ?? "1.0.0";
+          MainIcon = new MainIcon( this , _icon);
+          if (_infoPage is InfoPage x)
+          {
+              x.Icon = _icon;
+              x.Name = "Base Plugin";
+              x.Description = "This is a base plugin for the Broadcast system.";
+              x.Version = DerivedAssembly.GetName().Version?.ToString() ?? "1.0.0";
+          }
+
           _configuration = new ConfigurationBuilder()
                 .AddInMemoryCollection() // Start with an empty configuration
                 .Build();
           
         }
-
         public virtual bool AttachConfiguration<T>(T configuration)
         {
             var configSection = configuration as IConfigurationSection;
@@ -88,14 +80,15 @@ namespace BroadcastPluginSDK
             }
 
             Debug.WriteLine($"Base - {Name} Attaching configuration to Plugin.");
-            var ConfigurationBuilder = new ConfigurationBuilder();
-            ConfigurationBuilder.AddConfiguration(configSection);
-            Configuration = ConfigurationBuilder.Build();
+            var configurationBuilder = new ConfigurationBuilder();
+            configurationBuilder.AddConfiguration(configSection);
+            Configuration = configurationBuilder.Build();
             return true;
         }
-        public virtual void Start() 
+        public virtual string Start() 
         {
             // Default implementation does nothing, can be overridden by derived classes
+            return string.Empty;
         }
 
         public event EventHandler? Click; 
@@ -115,11 +108,11 @@ namespace BroadcastPluginSDK
     public class MainIcon : PictureBox
     {
         public Image Icon { get => this.BackgroundImage ?? Resources.red; set => this.BackgroundImage = value; }
-        BroadcastPlugin parent;
-        public MainIcon( BroadcastPlugin parent , Image Icon) : base()
+        private readonly BroadcastPlugin _parent;
+        public MainIcon( BroadcastPlugin parent , Image icon) : base()
         {
-            this.parent = parent;
-            this.BackgroundImage = Icon ?? Properties.Resources.red;
+            this._parent = parent;
+            this.BackgroundImage = icon ?? Properties.Resources.red;
             this.BackgroundImageLayout = ImageLayout.Stretch;
             this.Size = new Size(100, 100);
             this.Name = "API";
@@ -132,11 +125,11 @@ namespace BroadcastPluginSDK
         }
         internal virtual void OnClick(object? sender, EventArgs e)
         {
-            parent.OnClick();
+            _parent.OnClick();
         }
         internal virtual void  OnMouseHover(object? sender, EventArgs e)
         {
-            parent.OnHover();
+            _parent.OnHover();
         }
     }
 }

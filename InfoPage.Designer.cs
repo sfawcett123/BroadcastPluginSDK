@@ -88,7 +88,7 @@
             Controls.Add(pName);
             Controls.Add(pictureBox1);
             Name = "InfoPage";
-            Size = new Size(448, 450);
+            Size = new Size(448, 386);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();

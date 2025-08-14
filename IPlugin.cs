@@ -15,7 +15,9 @@ namespace BroadcastPluginSDK
 
     public interface ICache
     {
-        public IEnumerable<KeyValuePair<string, string>> Read(List<string> values);
+        public bool Master { get; set; } 
+
+        public delegate IEnumerable<KeyValuePair<string, string>> CacheReader(List<string> values);
         public void Write( PluginData data );
         public void Clear();
     }
@@ -29,7 +31,7 @@ namespace BroadcastPluginSDK
         public UserControl? InfoPage { get; set; }
         public string FilePath { get; set;  }
         public bool AttachConfiguration<T>(T configuration);
-        public void Start();
+        public string Start();
         public string RepositoryUrl { get; }
         public MainIcon MainIcon { get; }
         
