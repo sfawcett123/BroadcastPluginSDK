@@ -1,24 +1,28 @@
 ﻿using Microsoft.Extensions.Configuration;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BroadcastPluginSDK
 {
-
-    public class PluginData : Dictionary<string, string> 
+    public delegate List<KeyValuePair<string, string>> GetCacheDataDelegate(List<string> keys);
+    public class ListEventArgs<T> : EventArgs
     {
-        
-    }
+        public List<T> Items { get; }
 
+        public ListEventArgs(List<T> items)
+        {
+            Items = items ?? new List<T>();
+        }
+    }
     public interface IProvider
     {
-        public event EventHandler<PluginData> DataReceived;
+        public event EventHandler<Dictionary<string, string>> DataReceived;
     }
 
     public interface ICache
     {
         public bool Master { get; set; } 
-
-        public delegate IEnumerable<KeyValuePair<string, string>> CacheReader(List<string> values);
-        public void Write( PluginData data );
+        public List<KeyValuePair<string, string>> CacheReader(List<string> keys);
+        public void Write(Dictionary<string, string> data) ;
         public void Clear();
     }
 
@@ -34,9 +38,11 @@ namespace BroadcastPluginSDK
         public string Start();
         public string RepositoryUrl { get; }
         public MainIcon MainIcon { get; }
-        
+        public GetCacheDataDelegate? GetCacheData { get; set; }
+
         event EventHandler Click;
         event EventHandler MouseHover;
 
+        
     }
 }

@@ -2,10 +2,19 @@
 using BroadcastPluginSDK.Properties;
 using System.Diagnostics;
 using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 
 namespace BroadcastPluginSDK
 {
-    public abstract class BroadcastPlugin : IPlugin 
+    public abstract class BroadcastCacheBase : BroadcastPluginBase , ICache 
+    {
+        public bool Master { get; set; } = false;
+        public abstract List<KeyValuePair<string, string>> CacheReader(List<string> keys);
+        public abstract void Write(Dictionary<string, string> data);
+        public abstract void Clear();
+    }
+
+    public abstract class BroadcastPluginBase : IPlugin 
     {
         public virtual string Version { get => ((InfoPage)_infoPage).Version; set => ((InfoPage)_infoPage).Version = value; }
         public virtual string Name {  get => ((InfoPage)_infoPage).Name ; set => ((InfoPage)_infoPage).Name = value; }
@@ -13,6 +22,7 @@ namespace BroadcastPluginSDK
         public virtual string Stanza => "base";
         public virtual UserControl? InfoPage { get => _infoPage; set => _infoPage = value ?? throw new NullReferenceException(); } 
         public virtual MainIcon MainIcon { get; }
+        public  virtual GetCacheDataDelegate? GetCacheData { set; get; } = null;
 
         private Image? _icon = Resources.red;
         private IConfiguration _configuration;
@@ -39,9 +49,7 @@ namespace BroadcastPluginSDK
         }
 
         public string FilePath { get; set; } = string.Empty;
-
         public Assembly DerivedAssembly {  get => this.GetType().Assembly; }
-
         private string? GetAssemblyMetadata(string key)
         { 
             return DerivedAssembly
@@ -54,7 +62,7 @@ namespace BroadcastPluginSDK
             get => GetAssemblyMetadata("RepositoryUrl") ?? String.Empty ;
         
         }
-        protected BroadcastPlugin()
+        protected BroadcastPluginBase()
         {
           MainIcon = new MainIcon( this , _icon);
           if (_infoPage is InfoPage x)
@@ -108,8 +116,8 @@ namespace BroadcastPluginSDK
     public class MainIcon : PictureBox
     {
         public Image Icon { get => this.BackgroundImage ?? Resources.red; set => this.BackgroundImage = value; }
-        private readonly BroadcastPlugin _parent;
-        public MainIcon( BroadcastPlugin parent , Image icon) : base()
+        private readonly BroadcastPluginBase _parent;
+        public MainIcon( BroadcastPluginBase parent , Image icon) : base()
         {
             this._parent = parent;
             this.BackgroundImage = icon ?? Properties.Resources.red;
