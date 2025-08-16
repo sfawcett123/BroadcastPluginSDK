@@ -14,24 +14,24 @@ namespace BroadcastPluginSDK
         public abstract void Clear();
     }
 
-    public abstract class BroadcastPluginBase : IPlugin 
+    public abstract class BroadcastPluginBase : IPlugin
     {
         public virtual string Version { get => ((InfoPage)_infoPage).Version; set => ((InfoPage)_infoPage).Version = value; }
-        public virtual string Name {  get => ((InfoPage)_infoPage).Name ; set => ((InfoPage)_infoPage).Name = value; }
-        public virtual string Description { get => ((InfoPage )_infoPage).Description; set => ((InfoPage)_infoPage).Description = value; }
+        public virtual string Name { get => ((InfoPage)_infoPage).Name; set => ((InfoPage)_infoPage).Name = value; }
+        public virtual string Description { get => ((InfoPage)_infoPage).Description; set => ((InfoPage)_infoPage).Description = value; }
         public virtual string Stanza => "base";
-        public virtual UserControl? InfoPage { get => _infoPage; set => _infoPage = value ?? throw new NullReferenceException(); } 
+        public virtual UserControl? InfoPage { get => _infoPage; set => _infoPage = value ?? throw new NullReferenceException(); }
         public virtual MainIcon MainIcon { get; }
-        public  virtual GetCacheDataDelegate? GetCacheData { set; get; } = null;
+        public virtual GetCacheDataDelegate? GetCacheData { set; get; } = null;
 
-        private Image? _icon = Resources.red;
+        private Image? _icon;
         private IConfiguration _configuration;
-        private UserControl _infoPage = new InfoPage();
+        private UserControl _infoPage;
 
         protected IConfiguration? Configuration
         {
             get => _configuration;
-            set => _configuration = value  ?? throw new ArgumentNullException( "Mandatory Parameter",  nameof(IConfiguration));
+            set => _configuration = value ?? throw new ArgumentNullException("Mandatory Parameter", nameof(IConfiguration));
         }
 
         public virtual Image Icon
@@ -41,7 +41,7 @@ namespace BroadcastPluginSDK
             {
                 _icon = value;
                 MainIcon.Icon = value;
-                if ( _infoPage is InfoPage x) 
+                if (_infoPage is InfoPage x)
                 {
                     x.Icon = value; // Update InfoPage _icon if it exists
                 }
@@ -49,35 +49,47 @@ namespace BroadcastPluginSDK
         }
 
         public string FilePath { get; set; } = string.Empty;
-        public Assembly DerivedAssembly {  get => this.GetType().Assembly; }
+        public Assembly DerivedAssembly { get => this.GetType().Assembly; }
         private string? GetAssemblyMetadata(string key)
-        { 
+        {
             return DerivedAssembly
                 .GetCustomAttributes<AssemblyMetadataAttribute>()
                 .FirstOrDefault(attr => attr.Key == key)
                 ?.Value;
         }
 
-        public string RepositoryUrl { 
-            get => GetAssemblyMetadata("RepositoryUrl") ?? String.Empty ;
-        
-        }
-        protected BroadcastPluginBase()
+        public string RepositoryUrl
         {
-          MainIcon = new MainIcon( this , _icon);
-          if (_infoPage is InfoPage x)
-          {
-              x.Icon = _icon;
-              x.Name = "Base Plugin";
-              x.Description = "This is a base plugin for the Broadcast system.";
-              x.Version = DerivedAssembly.GetName().Version?.ToString() ?? "1.0.0";
-          }
-
-          _configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection() // Start with an empty configuration
-                .Build();
-          
+            get => GetAssemblyMetadata("RepositoryUrl") ?? String.Empty;
         }
+
+        // New protected constructor for DI
+        protected BroadcastPluginBase(
+            IConfiguration? configuration = null,
+            InfoPage? infoPage = null,
+            Image? icon = null,
+            MainIcon? mainIcon = null)
+        {
+            _icon = icon ?? Resources.red;
+            _infoPage = infoPage ?? new InfoPage();
+            MainIcon = mainIcon ?? new MainIcon(this, _icon);
+
+            if (_infoPage is InfoPage x)
+            {
+                x.Icon = _icon;
+                x.Name = "Base Plugin";
+                x.Description = "This is a base plugin for the Broadcast system.";
+                x.Version = DerivedAssembly.GetName().Version?.ToString() ?? "1.0.0";
+            }
+
+            _configuration = configuration ?? new ConfigurationBuilder()
+                .AddInMemoryCollection()
+                .Build();
+        }
+
+        // Keep parameterless constructor for backward compatibility
+        protected BroadcastPluginBase() : this(null, null, null, null) { }
+
         public virtual bool AttachConfiguration<T>(T configuration)
         {
             var configSection = configuration as IConfigurationSection;
@@ -93,13 +105,13 @@ namespace BroadcastPluginSDK
             Configuration = configurationBuilder.Build();
             return true;
         }
-        public virtual string Start() 
+        public virtual string Start()
         {
             // Default implementation does nothing, can be overridden by derived classes
             return string.Empty;
         }
 
-        public event EventHandler? Click; 
+        public event EventHandler? Click;
         public event EventHandler? MouseHover;
 
         internal void OnClick()
