@@ -12,6 +12,18 @@ namespace BroadcastPluginSDK
         public abstract List<KeyValuePair<string, string>> CacheReader(List<string> keys);
         public abstract void Write(Dictionary<string, string> data);
         public abstract void Clear();
+
+        protected BroadcastCacheBase(
+            IConfiguration? configuration = null,
+            InfoPage? infoPage = null,
+            Image? icon = null,
+            string? name = null,
+            string? stanza = null,
+            bool master = false,
+            string? description = null) : base(configuration, infoPage, icon, name, stanza, description)
+        {
+            Master = master;
+        }
     }
 
     public abstract class BroadcastPluginBase : IPlugin
@@ -19,14 +31,26 @@ namespace BroadcastPluginSDK
         public virtual string Version { get => ((InfoPage)_infoPage).Version; set => ((InfoPage)_infoPage).Version = value; }
         public virtual string Name { get => ((InfoPage)_infoPage).Name; set => ((InfoPage)_infoPage).Name = value; }
         public virtual string Description { get => ((InfoPage)_infoPage).Description; set => ((InfoPage)_infoPage).Description = value; }
-        public virtual string Stanza => "base";
+        public virtual string Stanza
+        {
+            get => _stanza;  set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new ArgumentException("Stanza cannot be null or empty.", nameof(value));
+                }
+                _stanza = value;
+            }
+        }
         public virtual UserControl? InfoPage { get => _infoPage; set => _infoPage = value ?? throw new NullReferenceException(); }
-        public virtual MainIcon MainIcon { get; }
+        public virtual MainIcon MainIcon { get => _mainicon; set => _mainicon = value; }
         public virtual GetCacheDataDelegate? GetCacheData { set; get; } = null;
 
+        private MainIcon _mainicon;
         private Image? _icon;
         private IConfiguration _configuration;
         private UserControl _infoPage;
+        private string _stanza ;
 
         protected IConfiguration? Configuration
         {
@@ -68,17 +92,20 @@ namespace BroadcastPluginSDK
             IConfiguration? configuration = null,
             InfoPage? infoPage = null,
             Image? icon = null,
-            MainIcon? mainIcon = null)
+            string? name = null ,
+            string? stanza = null,
+            string? description = null )
         {
             _icon = icon ?? Resources.red;
             _infoPage = infoPage ?? new InfoPage();
-            MainIcon = mainIcon ?? new MainIcon(this, _icon);
+            _mainicon  = new MainIcon(this, _icon);
+            ((InfoPage)_infoPage).Name = name ?? String.Empty;
+            _stanza = stanza ?? "base";
+            ((InfoPage)_infoPage).Description  = description ?? String.Empty;
 
             if (_infoPage is InfoPage x)
             {
                 x.Icon = _icon;
-                x.Name = "Base Plugin";
-                x.Description = "This is a base plugin for the Broadcast system.";
                 x.Version = DerivedAssembly.GetName().Version?.ToString() ?? "1.0.0";
             }
 
@@ -88,7 +115,15 @@ namespace BroadcastPluginSDK
         }
 
         // Keep parameterless constructor for backward compatibility
-        protected BroadcastPluginBase() : this(null, null, null, null) { }
+        protected BroadcastPluginBase() : this(
+            null, // configuration
+            null, // infoPage
+            null, // icon
+            null, // name
+            null, // stanza
+            null  // description
+        )
+        { }
 
         public virtual bool AttachConfiguration<T>(T configuration)
         {

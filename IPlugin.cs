@@ -24,6 +24,8 @@ namespace BroadcastPluginSDK
         public List<KeyValuePair<string, string>> CacheReader(List<string> keys);
         public void Write(Dictionary<string, string> data) ;
         public void Clear();
+
+        public string Name { get; set; }
     }
 
     public  interface IPlugin 
