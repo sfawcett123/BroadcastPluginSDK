@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace BroadcastPluginSDK
 {
-    public partial class InfoPage : UserControl 
+    public partial class InfoPage : UserControl , IInfoPage
     {
         public Image? Icon
         {
@@ -20,7 +20,10 @@ namespace BroadcastPluginSDK
         public new string Name { set => pName.Text = value; get => pName.Text; }
         public string Version { set => pVersion.Text = value; get => pVersion.Text; }
         public string Description { set => pDescription.Text = value; get => pDescription.Text; }
-
+        public Control GetControl()
+        {
+            return this;
+        }
         public InfoPage()
         {
             InitializeComponent();

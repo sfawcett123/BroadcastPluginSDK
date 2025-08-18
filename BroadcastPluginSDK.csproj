@@ -32,9 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="InfoPage.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="InfoPage.cs" />
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
