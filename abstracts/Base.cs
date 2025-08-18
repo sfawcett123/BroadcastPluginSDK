@@ -76,7 +76,7 @@ public abstract class BroadcastPluginBase : IPlugin
 
     public IInfoPage InfoPage
     {
-        get => _infoPage;
+        get => _infoPage ;
         set => _infoPage = value as InfoPage;
     }
 

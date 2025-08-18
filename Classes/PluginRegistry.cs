@@ -25,9 +25,21 @@ public class PluginRegistry : IPluginRegistry
     public ICache? MasterCache()
     {
         var c = Caches()?.FirstOrDefault(c => c.Master);
-        if (c != null) return c;
-
-        Debug.WriteLine("No master cache found.");
+        
+        if (c != null)
+        {
+            Debug.WriteLine($"Master cache found: {c.Name}");
+            return c;
+        }
+       
+        c = Caches()?.FirstOrDefault();
+        if (c != null)
+        {
+            Debug.WriteLine($"No master cache found. Choosing first cache {c.Name}");
+            return c;
+        }
+       
+        Debug.WriteLine("No caches found.");
         return null;
     }
 
