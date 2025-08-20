@@ -45,13 +45,37 @@ namespace BroadcastPluginSDK.Classes
                         release.ShortName = release.Repo.Split('/').Last() ?? release.Repo;
                         _logger.LogDebug("Fetching README for {0}", release.ShortName);
                         release.ReadMe = await GetReadme(release.ReadMeUrl);
-                        release.Installed = _registry.GetAll()
-                            .FirstOrDefault(p => p.ShortName.Equals(release.ShortName, StringComparison.OrdinalIgnoreCase))?.Version ?? "0.0.0";
+                        IPlugin? found = _registry.GetAll().FirstOrDefault(p =>
+                            p.ShortName.Equals(release.ShortName, StringComparison.OrdinalIgnoreCase));
+                        if (found != null)
+                        {
+                            release.Installed = GetInstalled(_registry, release.ShortName);
+                            release.IsLatest = release.Version.Equals(found.Version, StringComparison.OrdinalIgnoreCase);
+                        }
+                        else
+                        {
+                            release.Installed = String.Empty;
+                            release.IsLatest = false;
+                        }
+
                     }
                 }
             });
         }
 
+        static string GetInstalled( IPluginRegistry list , string ShortName)
+        {
+            var current = list.GetAll()
+                .FirstOrDefault(p => p.ShortName.Equals(ShortName, StringComparison.OrdinalIgnoreCase))?.Version;
+
+            if (string.IsNullOrWhiteSpace(current))
+            {
+                return string.Empty;
+            } 
+
+            return string.Join(".", current.Split('.').Take(3));
+
+        }
         private async Task<ReleaseListItem[]> GetReleases(string jsonUrl)
         {
             try

@@ -41,7 +41,7 @@ public abstract class BroadcastPluginBase : IPlugin
             _configuration = new ConfigurationBuilder().AddInMemoryCollection().Build();
         }
     }
-    
+
     public virtual Image Icon
     {
         get => _icon ?? Resources.red;
