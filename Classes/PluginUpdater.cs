@@ -42,8 +42,11 @@ namespace BroadcastPluginSDK.Classes
                 {
                     if (string.IsNullOrWhiteSpace(release.ReadMe))
                     {
-                        _logger.LogDebug("Fetching README for {0}", release.Repo);
+                        release.ShortName = release.Repo.Split('/').Last() ?? release.Repo;
+                        _logger.LogDebug("Fetching README for {0}", release.ShortName);
                         release.ReadMe = await GetReadme(release.ReadMeUrl);
+                        release.Installed = _registry.GetAll()
+                            .FirstOrDefault(p => p.ShortName.Equals(release.ShortName, StringComparison.OrdinalIgnoreCase))?.Version ?? "0.0.0";
                     }
                 }
             });

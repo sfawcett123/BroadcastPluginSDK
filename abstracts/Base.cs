@@ -1,10 +1,9 @@
-﻿using System.Diagnostics;
-using System.Reflection;
-using BroadcastPluginSDK.Classes;
+﻿using BroadcastPluginSDK.Classes;
 using BroadcastPluginSDK.Interfaces;
 using BroadcastPluginSDK.Properties;
 using Microsoft.Extensions.Configuration;
-
+using System.Diagnostics;
+using System.Reflection;
 namespace BroadcastPluginSDK.abstracts;
 
 public abstract class BroadcastPluginBase : IPlugin
@@ -29,8 +28,7 @@ public abstract class BroadcastPluginBase : IPlugin
         {
             Icon = _icon,
             Name = GetType().FullName ?? GetType().Name ,
-            Version = GetAssemblyMetadata("Version") ?? "0.0.0",
-            Description = GetAssemblyMetadata("Description") ?? "No description in metadata",
+            Version = DerivedAssembly.GetName().Version?.ToString() ?? "NOT SET",
         };
 
         if (!string.IsNullOrEmpty(stanza) && configuration != null)
@@ -43,8 +41,7 @@ public abstract class BroadcastPluginBase : IPlugin
             _configuration = new ConfigurationBuilder().AddInMemoryCollection().Build();
         }
     }
-
-
+    
     public virtual Image Icon
     {
         get => _icon ?? Resources.red;
@@ -54,7 +51,7 @@ public abstract class BroadcastPluginBase : IPlugin
     public Assembly DerivedAssembly => GetType().Assembly;
 
     public string Name => GetType().FullName ?? GetType().Name;
-    public string Version => GetAssemblyMetadata("Version") ?? "0.0.0";
+    public string Version => DerivedAssembly.GetName().Version?.ToString() ?? "NOT SET";
     public string Description => GetAssemblyMetadata("Description") ?? "No description available.";
     public string ShortName => (GetType().FullName ?? GetType().Name).Split('.').First();
 

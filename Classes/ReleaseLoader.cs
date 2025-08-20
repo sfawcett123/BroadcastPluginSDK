@@ -12,6 +12,7 @@ public class ReleaseListItem
     public string Repo { get; set; } = string.Empty;
     public string Version { get; set; } = string.Empty;
     public string Installed { get; set; } = "1.0.0";
+    public string ShortName { get; set; } = string.Empty; // Added for better readability in some contexts
     public bool IsLatest { get; set; } = false;
     public string ZipName { get; set; } = string.Empty;
     public string DownloadUrl { get; set; } = string.Empty;
