@@ -86,7 +86,7 @@ public class ReleaseService
                         ZipName = zip.Name,
                         DownloadUrl = zip.Url,
                         ReadMeUrl = release.ReadMeUrl,
-                        Installed = "1.0.0" // TODO: Go get installed version from somewhere
+                        Installed = string.Empty,
                     };
                 }
             }
