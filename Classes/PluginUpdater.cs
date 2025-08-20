@@ -12,7 +12,7 @@ namespace BroadcastPluginSDK.Classes
         private readonly IPluginRegistry _registry;
         private readonly ILogger<IPlugin> _logger;
         private readonly IConfiguration _config;
-        private ReleaseListItem [] _releases ;
+        private ReleaseListItem[] _releases;
 
         public ReleaseListItem[] Releases =>_releases; 
 
