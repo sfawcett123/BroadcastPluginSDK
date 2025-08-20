@@ -23,6 +23,7 @@ namespace BroadcastPluginSDK.Classes
             _registry = registry;
             _logger = logger;
             _config = config;   
+            _releases = Array.Empty<ReleaseListItem>();
 
             var repository = _config.GetValue<string>("RepositoryUrl") ?? jsonUrl;
             _logger.LogInformation("Starting Plugin Updater {0}", repository);

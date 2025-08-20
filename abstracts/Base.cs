@@ -10,9 +10,6 @@ namespace BroadcastPluginSDK.abstracts;
 public abstract class BroadcastPluginBase : IPlugin
 {
     private IConfiguration _configuration;
-
-     
-    private string ?_name;
     private Image? _icon;
     private IInfoPage? _infoPage;
     private MainIcon _mainIcon;
@@ -23,20 +20,17 @@ public abstract class BroadcastPluginBase : IPlugin
         IConfiguration? configuration = null,
         IInfoPage? infoPage = null,
         Image? icon = null,
-        string? name = null,
-        string? stanza = null,
-        string? description = null)
+        string? stanza = null )
     {
         _icon = icon ?? DefaultImage;
         _stanza = stanza ?? "base";
-        _name = name ?? GetAssemblyMetadata("Name") ?? "Unknown Plugin";
         _mainIcon = new MainIcon(this, _icon);
         _infoPage = infoPage ?? new InfoPage
         {
             Icon = _icon,
-            Name = name ?? "Unknown Plugin",
+            Name = GetType().FullName ?? GetType().Name ,
             Version = GetAssemblyMetadata("Version") ?? "0.0.0",
-            Description = description ?? "No description available."
+            Description = GetAssemblyMetadata("Description") ?? "No description in metadata",
         };
 
         if (!string.IsNullOrEmpty(stanza) && configuration != null)
@@ -59,14 +53,10 @@ public abstract class BroadcastPluginBase : IPlugin
 
     public Assembly DerivedAssembly => GetType().Assembly;
 
-    public string Name
-    {
-        get => _name ?? GetAssemblyMetadata("Name") ?? "Unknown Plugin";
-        set => _name = value;
-    }
-
+    public string Name => GetType().FullName ?? GetType().Name;
     public string Version => GetAssemblyMetadata("Version") ?? "0.0.0";
     public string Description => GetAssemblyMetadata("Description") ?? "No description available.";
+    public string ShortName => (GetType().FullName ?? GetType().Name).Split('.').First();
 
     public MainIcon MainIcon
     {

@@ -10,9 +10,7 @@ public abstract class BroadcastCacheBase : BroadcastPluginBase, ICache
         IConfiguration? configuration = null,
         IInfoPage? infoPage = null,
         Image? icon = null,
-        string? name = null,
-        string? stanza = null,
-        string? description = null) : base(configuration, infoPage, icon, name, stanza, description)
+        string? stanza = null) : base(configuration, infoPage, icon, stanza)
     {
         if (configuration != null)
         {

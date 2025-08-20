@@ -19,7 +19,7 @@ public class PluginRegistry : IPluginRegistry
     }
     public void Add(IPlugin plugin)
     {
-        _logger.LogInformation($"Adding plugin: {plugin.Name} (Version: {plugin.Version})");
+        _logger.LogInformation($"Adding plugin to registry: {plugin.ShortName} (Version: {plugin.Version})");
         _plugins.Add(plugin);
     }
 
