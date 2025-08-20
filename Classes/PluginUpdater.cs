@@ -54,7 +54,7 @@ namespace BroadcastPluginSDK.Classes
                         }
                         else
                         {
-                            release.Installed = String.Empty;
+                            release.Installed = string.Empty;
                             release.IsLatest = false;
                         }
 
