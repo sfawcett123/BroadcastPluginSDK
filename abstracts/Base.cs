@@ -27,7 +27,7 @@ public abstract class BroadcastPluginBase : IPlugin
         _infoPage = infoPage ?? new InfoPage
         {
             Icon = _icon,
-            Name = GetType().FullName ?? GetType().Name ,
+            Name = GetType().FullName ?? GetType().Name,
             Version = DerivedAssembly.GetName().Version?.ToString() ?? "NOT SET",
         };
 
