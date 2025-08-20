@@ -14,7 +14,7 @@ public abstract class BroadcastCacheBase : BroadcastPluginBase, ICache
     {
         if (configuration != null)
         {
-            Debug.WriteLine( "Configuration");
+            Debug.WriteLine("Configuration");
             var config = configuration.GetSection(stanza ?? "Cache").GetChildren();
             var masterSection = config.FirstOrDefault(section => section.Key == "master");
             bool.TryParse(masterSection?.Value, out bool master);
