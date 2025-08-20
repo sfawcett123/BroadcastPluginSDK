@@ -14,7 +14,7 @@ namespace BroadcastPluginSDK.Classes
         private readonly IConfiguration _config;
         private ReleaseListItem[] _releases;
 
-        public ReleaseListItem[] Releases =>_releases; 
+        public ReleaseListItem[] Releases => _releases; 
 
         private const string jsonUrl = "https://raw.githubusercontent.com/WhoIsBroadcast/BroadcastPlugins/main/releases.json";
 
