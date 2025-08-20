@@ -5,6 +5,8 @@ namespace BroadcastPluginSDK.Interfaces;
 public interface IPlugin
 {
     public string Name { get; }
+    public string Version { get; }
+    public string Description { get; }
     public MainIcon MainIcon { get; }
     public IInfoPage InfoPage { get; }
     public string FilePath { get; set; }

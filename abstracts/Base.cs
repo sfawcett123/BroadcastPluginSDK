@@ -11,6 +11,7 @@ public abstract class BroadcastPluginBase : IPlugin
 {
     private IConfiguration _configuration;
 
+     
     private string ?_name;
     private Image? _icon;
     private IInfoPage? _infoPage;
@@ -63,6 +64,10 @@ public abstract class BroadcastPluginBase : IPlugin
         get => _name ?? GetAssemblyMetadata("Name") ?? "Unknown Plugin";
         set => _name = value;
     }
+
+    public string Version => GetAssemblyMetadata("Version") ?? "0.0.0";
+    public string Description => GetAssemblyMetadata("Description") ?? "No description available.";
+
     public MainIcon MainIcon
     {
         get => _mainIcon;

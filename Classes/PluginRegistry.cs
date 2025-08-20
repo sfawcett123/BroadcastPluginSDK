@@ -1,19 +1,25 @@
 ﻿using BroadcastPluginSDK.abstracts;
 using BroadcastPluginSDK.Interfaces;
-using Microsoft.Win32;
-using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace BroadcastPluginSDK.Classes;
 
-public class PluginRegistry : IPluginRegistry
+public class PluginRegistry : IPluginRegistry 
 {
     //   public IEnumerable<PluginInfo> GetPluginInfo() =>
     //       _plugins.Select(p => new PluginInfo(p.Name, p.Version, p.FilePath, p.Description, p.RepositoryUrl));
 
     private readonly List<IPlugin> _plugins = new();
 
+    private readonly ILogger<PluginRegistry> _logger;
+    public PluginRegistry(ILogger<PluginRegistry> logger)
+    {
+        _logger = logger;
+        _logger.LogInformation("PluginRegistry initialized.");
+    }
     public void Add(IPlugin plugin)
     {
+        _logger.LogInformation($"Adding plugin: {plugin.Name} (Version: {plugin.Version})");
         _plugins.Add(plugin);
     }
 
@@ -28,18 +34,18 @@ public class PluginRegistry : IPluginRegistry
         
         if (c != null)
         {
-            Debug.WriteLine($"Master cache found: {c.Name}");
+            _logger.LogInformation($"Master cache found: {c.Name}");
             return c;
         }
        
         c = Caches()?.FirstOrDefault();
         if (c != null)
         {
-            Debug.WriteLine($"No master cache found. Choosing first cache {c.Name}");
+            _logger.LogInformation($"No master cache found. Choosing first cache {c.Name}");
             return c;
         }
-       
-        Debug.WriteLine("No caches found.");
+
+        _logger.LogError("No caches found.");
         return null;
     }
 
@@ -66,7 +72,7 @@ public class PluginRegistry : IPluginRegistry
         if (master is BroadcastCacheBase c)
             foreach (var plugin in GetAll())
             {
-                Debug.WriteLine($"Attaching cache reader to plugin: {plugin.Name}");
+                _logger.LogDebug($"Attaching cache reader to plugin: {plugin.Name}");
                 plugin.GetCacheData = c.CacheReader;
             }
     }
