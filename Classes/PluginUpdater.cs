@@ -12,10 +12,11 @@ namespace BroadcastPluginSDK.Classes
         private readonly ILogger<IPlugin> _logger;
         private readonly IConfiguration _config;
         private ReleaseListItem[] _releases;
+        private static readonly HttpClient _httpClient = new();
 
         public ReleaseListItem[] Releases => _releases; 
 
-        private const string jsonUrl = "https://raw.githubusercontent.com/WhoIsBroadcast/BroadcastPlugins/main/releases.json";
+        private const string jsonUrl = "https://raw.githubusercontent.com/SteveFawcett/delivery/refs/heads/main/releases.json";
 
         public PluginUpdater(IConfiguration config,  IPluginRegistry registry, ILogger<IPlugin> logger)
         {
@@ -31,7 +32,7 @@ namespace BroadcastPluginSDK.Classes
 
             foreach ( IPlugin x in _registry.GetAll())
             {
-                _logger.LogDebug("---> Registered plugin: {0}", x.Name);
+                _logger.LogDebug("Registered plugin: {0}", x.Name);
             }
 
             _ = Task.Run(async () =>
@@ -42,10 +43,14 @@ namespace BroadcastPluginSDK.Classes
                     if (string.IsNullOrWhiteSpace(release.ReadMe))
                     {
                         release.ShortName = release.Repo.Split('/').Last() ?? release.Repo;
+
                         _logger.LogDebug("Fetching README for {0}", release.ShortName);
+                        
                         release.ReadMe = await GetReadme(release.ReadMeUrl);
+                        
                         IPlugin? found = _registry.GetAll().FirstOrDefault(p =>
                             p.ShortName.Equals(release.ShortName, StringComparison.OrdinalIgnoreCase));
+                        
                         if (found != null)
                         {
                             release.Installed = GetInstalled(_registry, release.ShortName);
@@ -60,6 +65,25 @@ namespace BroadcastPluginSDK.Classes
                     }
                 }
             });
+        }
+        public List<string> Versions(string shortName)
+        {
+            return Releases
+                .Where(r => string.Equals(r.ShortName, shortName, StringComparison.OrdinalIgnoreCase))
+                .Select(r => r.Version)
+                .Distinct() // Optional: remove duplicates
+                .OrderByDescending(v => Version.Parse(v)) // Optional: sort by version descending
+                .ToList();
+        }
+
+        public List<ReleaseListItem> Latest()
+        {
+            return Releases
+                .GroupBy(r => r.ShortName)
+                .Select(g => g
+                    .OrderByDescending(r => Version.Parse(r.Version))
+                    .First())
+                .ToList();
         }
 
         static string GetInstalled( IPluginRegistry list , string ShortName)
@@ -93,31 +117,48 @@ namespace BroadcastPluginSDK.Classes
         {
             try
             {
-                string markdown = await DownloadStringAsync(url) ?? "# README Not found";
+                // pass the logger to the DownloadStringAsync method
+                string markdown = await DownloadStringAsync(url, _logger ) ?? "# README Not found";
                 return markdown;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error fetching README: {ex.Message}");
+                _logger.LogError($"Error fetching README: {ex.Message}");
                 return string.Empty;
             }
         }
 
-        public static async Task<string?> DownloadStringAsync(string url)
-        {
-            using var httpClient = new HttpClient();
 
+        public static async Task<string?> DownloadStringAsync(string url, ILogger<IPlugin>? _logger = null, CancellationToken cancellationToken = default)
+        {
             try
             {
-                var response = await httpClient.GetAsync(url);
+                if (_logger != null)
+                {
+                    _logger.LogInformation("📥 Downloading from URL: {Url}", url);
+                }
+                else
+                {
+                    Console.WriteLine($"📥 Downloading from URL: {url}");
+                }
+
+                var response = await _httpClient.GetAsync(url, cancellationToken);
                 response.EnsureSuccessStatusCode();
 
-                string content = await response.Content.ReadAsStringAsync();
-                return content;
+                return await response.Content.ReadAsStringAsync(cancellationToken);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Error downloading string: {ex.Message}");
+                var message = $"❌ Error downloading string: {ex.Message}";
+                if (_logger != null)
+                {
+                    _logger.LogError("❌ Error downloading string: {ErrorMessage}", ex.Message);
+                }
+                else
+                {
+                    Console.WriteLine(message);
+                }
+
                 return null;
             }
         }
