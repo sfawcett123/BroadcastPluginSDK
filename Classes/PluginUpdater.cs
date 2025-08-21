@@ -1,6 +1,5 @@
 ﻿using Broadcast.Classes;
 using BroadcastPluginSDK.Interfaces;
-using Markdig;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
@@ -95,8 +94,7 @@ namespace BroadcastPluginSDK.Classes
             try
             {
                 string markdown = await DownloadStringAsync(url) ?? "# README Not found";
-                string html = Markdown.ToHtml(markdown);
-                return html;
+                return markdown;
             }
             catch (Exception ex)
             {

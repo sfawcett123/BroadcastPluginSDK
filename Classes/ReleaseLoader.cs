@@ -12,6 +12,7 @@ public class ReleaseListItem
     public string Repo { get; set; } = string.Empty;
     public string Version { get; set; } = string.Empty;
     public string Installed { get; set; } = "1.0.0";
+    public string ReadMeDocUrl { get; set; } = string.Empty; // This is the URL to the README document, if available
     public string ShortName { get; set; } = string.Empty; // Added for better readability in some contexts
     public bool IsLatest { get; set; } = false;
     public string ZipName { get; set; } = string.Empty;
@@ -27,6 +28,7 @@ public class ReleaseInfo
     public string Tag { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string ReadMeUrl { get; set; } = string.Empty;
+    public string ReadMeDocUrl { get; set; } = string.Empty;
     public DateTime Published { get; set; } = DateTime.Now;
     public bool IsLatest { get; set; } = false;   
     public List<ZipFile> ZipFiles { get; set; } = new List<ZipFile>();
@@ -86,6 +88,7 @@ public class ReleaseService
                         ZipName = zip.Name,
                         DownloadUrl = zip.Url,
                         ReadMeUrl = release.ReadMeUrl,
+                        ReadMeDocUrl = release.ReadMeDocUrl,
                         Installed = string.Empty,
                     };
                 }
