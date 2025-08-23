@@ -1,22 +1,22 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 
-name: publish
-permissions:
-  contents: read
-on:
-  workflow_dispatch: # Allow running the workflow manually from the GitHub UI
-  push:
-    branches:
-      - '*'       # Run the workflow on all branches
-  pull_request:
-    branches:
-      - '*'          # Run the workflow for all pull requests
+name: 🚀 Build NuGet Package
 
+permissions:
+  contents: write
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 env:
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   DOTNET_NOLOGO: true
   NuGetDirectory: ${{ github.workspace }}\artifacts
+  NUGET_SOURCE: https://api.nuget.org/v3/index.json
 
 defaults:
   run:
@@ -26,67 +26,68 @@ jobs:
   run_test:
     runs-on: windows-latest
     steps:
-    - name: checkout
-      uses: actions/checkout@v5
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      - name: 🧾 Checkout
+        uses: actions/checkout@v5
 
-  #  - name: Run tests
-  #    run: dotnet test --configuration Debug --filter "TestCategory=Static"
+      - name: 🟢 Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # - name: 🧪 Run tests
+      #   run: dotnet test --configuration Debug --filter "TestCategory=Static"
 
   create_nuget:
     runs-on: windows-latest
     needs: [ run_test ]
     steps:
-    - name: Checkout
-      uses: actions/checkout@v5
-      with:
-        fetch-depth: 0 # Get all history to allow automatic versioning using MinVer
+      - name: 🧾 Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # Required for MinVer to access full Git history
 
-    # Install the .NET SDK indicated in the global.json file
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-          dotnet-version: 8
+      - name: 🟢 Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
 
-    - name: Restore dependencies 
-      run:  dotnet restore
+      - name: 📦 Restore dependencies
+        run: dotnet restore
 
-    - name: Build
-      run:  dotnet build --configuration Release
+      - name: 🔧 Build with MinVer
+        run: dotnet build --configuration Release /p:MinVerBuildMetadata=ci
 
-    - name: Get version from tag
-      id: get_version
-      if: github.event_name == 'release'
-      uses: jannemattila/get-version-from-tag@v4
-     
-    - name: Ensure output directory exists
-      run: |
-           New-Item -ItemType Directory -Force -Path "${{ env.NuGetDirectory }}"
+      - name: 🧠 Compute Semantic Version
+        id: minver
+        run: |
+          $version = dotnet minver --tag-prefix v
+          echo "MinVer version: $version"
+          echo "version=$version" >> $env:GITHUB_OUTPUT
 
-    - name: Get Version (release)
-      if: github.event_name == 'release'
-      shell: bash
-      run: |
-         VERSION=$(echo "${{ steps.get_version.outputs.version }}")
-         dotnet pack --configuration Release -p:PackageVersion=${VERSION} --output "${NuGetDirectory}"
+      - name: 📦 Pack with MinVer
+        run: |
+          New-Item -ItemType Directory -Force -Path "${{ env.NuGetDirectory }}"
+          dotnet pack --configuration Release `
+            --output "${{ env.NuGetDirectory }}" `
+            /p:MinVerBuildMetadata=ci `
+            /p:PackageVersion=${{ steps.minver.outputs.version }}
 
-    - name: Get Version (none release)
-      if: github.event_name != 'release'
-      shell: bash
-      run: |
-         VERSION=$(date +%s) # Use current timestamp as version
-         dotnet pack --configuration Release -p:PackageVersion=${VERSION} --output "${NuGetDirectory}"
+      - name: 🎯 Show Version Summary
+        run: |
+          echo "::group::🔖 Semantic Version"
+          echo "Computed Version: ${{ steps.minver.outputs.version }}"
+          echo "::endgroup::"
 
-    - name: Log packed files
-      run: Get-ChildItem "${NuGetDirectory}" -Recurse
+      - name: 📂 Log packed files
+        run: Get-ChildItem "${{ env.NuGetDirectory }}" -Recurse
 
-    # build the NuGet package as an artifact,
-    - name: Upload package
-      uses: actions/upload-artifact@v4
-      with:
-        name: nuget
-        if-no-files-found: error
-        retention-days: 7
-        path: ${{ env.NuGetDirectory }}/*.nupkg
+      - name: 📤 Upload NuGet package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget
+          if-no-files-found: error
+          retention-days: 7
+          path: ${{ env.NuGetDirectory }}/*.nupkg
+
+              --skip-duplicate
+          }
