@@ -1,10 +1,6 @@
 ﻿# Test Plugin
 
-![NuGet](https://img.shields.io/nuget/v/Test.Plugin?label=NuGet)
-![Pre-release](https://img.shields.io/nuget/vpre/Test.Plugin?label=Pre-release)
-![GitHub Release](https://img.shields.io/github/v/release/your-org/your-repo?label=GitHub)
-
-![Publish Status](https://github.com/your-org/your-repo/actions/workflows/publish.yml/badge.svg)
+![GitHub Release](https://img.shields.io/github/v/release/SteveFawcett/BroadcastPluginSDK?label=GitHub)
 
 ## Creating a Plugin
 Plugins are created by implementing the `IBroadcast` interface. This interface is defined in the `PluginBase` project, which is a dependency of this project.
