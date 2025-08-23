@@ -1,7 +1,7 @@
 ﻿# Test Plugin
 
-![NuGet](https://img.shields.io/nuget/v/Your.Package.Id?label=NuGet)
-![Pre-release](https://img.shields.io/nuget/vpre/Your.Package.Id?label=Pre-release)
+![NuGet](https://img.shields.io/nuget/v/Test.Plugin?label=NuGet)
+![Pre-release](https://img.shields.io/nuget/vpre/Test.Plugin?label=Pre-release)
 ![GitHub Release](https://img.shields.io/github/v/release/your-org/your-repo?label=GitHub)
 
 
