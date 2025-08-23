@@ -1,5 +1,10 @@
 ﻿# Test Plugin
-test
+
+![NuGet](https://img.shields.io/nuget/v/Your.Package.Id?label=NuGet)
+![Pre-release](https://img.shields.io/nuget/vpre/Your.Package.Id?label=Pre-release)
+![GitHub Release](https://img.shields.io/github/v/release/your-org/your-repo?label=GitHub)
+
+
 ## Creating a Plugin
 Plugins are created by implementing the `IBroadcast` interface. This interface is defined in the `PluginBase` project, which is a dependency of this project.
 To create a plugin, you need to create a class that implements the `IBroadcast` interface. Here is an example of how to do this:
