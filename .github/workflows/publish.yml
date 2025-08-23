@@ -15,8 +15,32 @@ env:
   NUGET_SOURCE: https://api.nuget.org/v3/index.json
 
 jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🧱 Checkout code
+        uses: actions/checkout@v3
+  
+      - name: 🛠 Install git-chglog
+        run: |
+          curl -sSL https://github.com/git-chglog/git-chglog/releases/latest/download/git-chglog-linux-amd64.tar.gz | tar -xz
+          chmod +x git-chglog
+          sudo mv git-chglog /usr/local/bin/
+  
+      - name: 📝 Generate CHANGELOG.md
+        run: git-chglog -o CHANGELOG.md
+  
+      - name: 📤 Commit changelog
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "docs: update CHANGELOG.md"
+          git push
+          
   build-pack-release-publish:
     runs-on: windows-latest
+    needs: [ changelog ]
     defaults:
       run:
         shell: pwsh
