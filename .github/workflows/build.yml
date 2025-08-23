@@ -54,15 +54,20 @@ jobs:
       - name: 📦 Restore dependencies
         run: dotnet restore
 
+      - name: 📥 Install MinVer CLI
+        run: dotnet tool install --global minver-cli
+  
       - name: 🔧 Build with MinVer
         run: dotnet build --configuration Release /p:MinVerBuildMetadata=ci
 
       - name: 🧠 Compute Semantic Version
         id: minver
         run: |
-          $version = dotnet minver --tag-prefix v
+          $env:PATH += ";$env:USERPROFILE\.dotnet\tools"
+          $version = minver --tag-prefix v
           echo "MinVer version: $version"
           echo "version=$version" >> $env:GITHUB_OUTPUT
+
 
       - name: 📦 Pack with MinVer
         run: |
