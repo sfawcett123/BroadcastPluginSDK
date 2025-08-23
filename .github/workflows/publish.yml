@@ -5,9 +5,8 @@ permissions:
 
 on:
   push:
-    branches:
-      - main # Or your default branch
-      - master
+    tags:
+      - 'v*'
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
