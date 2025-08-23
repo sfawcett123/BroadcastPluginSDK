@@ -3,7 +3,7 @@
 ![GitHub Release](https://img.shields.io/github/v/release/SteveFawcett/BroadcastPluginSDK?label=GitHub)
 [![🚀 Publish NuGet Package](https://github.com/SteveFawcett/BroadcastPluginSDK/actions/workflows/publish.yml/badge.svg?branch=master)](https://github.com/SteveFawcett/BroadcastPluginSDK/actions/workflows/publish.yml)
 
-[![Version](https://img.shields.io/badge/version-v${{ steps.minver.outputs.version }}-blue)
+![Version](https://img.shields.io/badge/version-v${{ steps.minver.outputs.version }}-blue)
 
 
 ## Creating a Plugin
