@@ -1,8 +1,8 @@
 # Changelog
 
-## [Unreleased](https://github.com/SteveFawcett/BroadcastPluginSDK/tree/HEAD)
+## [v1.0.11-preview.0.1.1.6.1](https://github.com/SteveFawcett/BroadcastPluginSDK/tree/v1.0.11-preview.0.1.1.6.1) (2025-08-23)
 
-[Full Changelog](https://github.com/SteveFawcett/BroadcastPluginSDK/compare/v1.0.11-preview.0.1.1.6...HEAD)
+[Full Changelog](https://github.com/SteveFawcett/BroadcastPluginSDK/compare/v1.0.11-preview.0.1.1.6...v1.0.11-preview.0.1.1.6.1)
 
 **Merged pull requests:**
 
