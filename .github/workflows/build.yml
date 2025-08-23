@@ -74,12 +74,16 @@ jobs:
 
       - name: 🎯 Show Version Summary
         run: |
-          echo "::group::🔖 Semantic Version"
+          echo "::notice title=🎵 Semantic Version::${{ steps.minver.outputs.version }}"
+          echo "::group::🔖 Version Details"
           echo "Computed Version: ${{ steps.minver.outputs.version }}"
           echo "::endgroup::"
 
       - name: 📂 Log packed files
-        run: Get-ChildItem "${{ env.NuGetDirectory }}" -Recurse
+        run: |
+          echo "::group::📦 Packed NuGet Files"
+          Get-ChildItem "${{ env.NuGetDirectory }}" -Recurse
+          echo "::endgroup::"
 
       - name: 📤 Upload NuGet package
         uses: actions/upload-artifact@v4
@@ -88,6 +92,3 @@ jobs:
           if-no-files-found: error
           retention-days: 7
           path: ${{ env.NuGetDirectory }}/*.nupkg
-
-              --skip-duplicate
-          }
