@@ -55,14 +55,8 @@ jobs:
         run: |
           $version = "${{ steps.minver.outputs.version }}"
           $lines = Get-Content CHANGELOG.md
-          $start = ($lines | Select-String "## 
-
-\[$version\]
-
-").LineNumber
-          $end = ($lines | Select-String "^## 
-
-\[" | Where-Object { $_.LineNumber -gt $start } | Select-Object -First 1).LineNumber
+          $start = ($lines | Select-String "## \[$version\]").LineNumber
+          $end = ($lines | Select-String "^## \[" | Where-Object { $_.LineNumber -gt $start } | Select-Object -First 1).LineNumber
           $length = if ($end) { $end - $start - 1 } else { $lines.Length - $start }
           $body = $lines[$start..($start + $length)] -join "`n"
           echo "body<<EOF" >> $env:GITHUB_OUTPUT
