@@ -29,6 +29,7 @@ jobs:
         run: gem install github_changelog_generator
 
       - name: 📝 Generate CHANGELOG.md
+        if: github.ref != 'refs/heads/master'
         run: |
           github_changelog_generator -u SteveFawcett -p BroadcastPluginSDK
           git config user.name "github-actions[bot]"
