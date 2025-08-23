@@ -20,24 +20,24 @@ jobs:
     steps:
       - name: 🧱 Checkout code
         uses: actions/checkout@v3
-  
-      - name: 🛠 Install git-chglog
+        
+      - name: 🛠 Install Ruby & Gem
         run: |
-          curl -sSL https://github.com/git-chglog/git-chglog/releases/download/v0.15.4/git-chglog_0.15.4_linux_amd64.tar.gz -o git-chglog.tar.gz
-          tar -xzf git-chglog.tar.gz
-          chmod +x git-chglog
-          sudo mv git-chglog /usr/local/bin/
-  
+          sudo apt-get update
+          sudo apt-get install ruby-full
+          gem install github_changelog_generator
+
       - name: 📝 Generate CHANGELOG.md
-        run: git-chglog -o CHANGELOG.md
-  
-      - name: 📤 Commit changelog
         run: |
+          github_changelog_generator -u SteveFawcett -p BroadcastPluginSDK
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md
           git commit -m "docs: update CHANGELOG.md"
           git push
+        env:
+          CHANGELOG_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+
           
   build-pack-release-publish:
     runs-on: windows-latest
