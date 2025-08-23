@@ -1,12 +1,12 @@
 name: 🚀 Publish NuGet Package
 
 permissions:
-  contents: read
+  contents: write # Needed to create GitHub releases
 
 on:
   push:
-    tags:
-      - 'v*' # Trigger only on version tags like v1.2.3
+    branches:
+      - main # Or your default branch
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
@@ -14,7 +14,7 @@ env:
   NUGET_SOURCE: https://api.nuget.org/v3/index.json
 
 jobs:
-  build-pack-publish:
+  build-pack-release-publish:
     runs-on: windows-latest
     defaults:
       run:
@@ -24,28 +24,60 @@ jobs:
       - name: 🧾 Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Required for MinVer to access full Git history
+          fetch-depth: 0
 
       - name: 🟢 Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
-      - name: 📦 Restore
-        run: dotnet restore
+      - name: 📥 Install MinVer CLI
+        run: dotnet tool install --global minver-cli
 
-      - name: 🛠️ Build with MinVer
+      - name: 🔍 Compute Semantic Version
+        id: minver
+        run: |
+          $env:PATH += ";$env:USERPROFILE\.dotnet\tools"
+          $version = minver --tag-prefix v --default-pre-release-phase preview
+          echo "Computed version: $version"
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+
+      - name: 🛠️ Build
         run: dotnet build --configuration Release /p:MinVerBuildMetadata=ci
 
-      - name: 📦 Pack with MinVer
+      - name: 📦 Pack
         run: |
           mkdir -Force artifacts
           dotnet pack --configuration Release --output artifacts /p:MinVerBuildMetadata=ci
 
-      - name: 🔍 Log version
+      - name: 📝 Extract Changelog for Release
+        id: changelog
         run: |
-          $version = dotnet minver --tag-prefix v
-          Write-Host "Computed version: $version"
+          $version = "${{ steps.minver.outputs.version }}"
+          $lines = Get-Content CHANGELOG.md
+          $start = ($lines | Select-String "## 
+
+\[$version\]
+
+").LineNumber
+          $end = ($lines | Select-String "^## 
+
+\[" | Where-Object { $_.LineNumber -gt $start } | Select-Object -First 1).LineNumber
+          $length = if ($end) { $end - $start - 1 } else { $lines.Length - $start }
+          $body = $lines[$start..($start + $length)] -join "`n"
+          echo "body<<EOF" >> $env:GITHUB_OUTPUT
+          echo "$body" >> $env:GITHUB_OUTPUT
+          echo "EOF" >> $env:GITHUB_OUTPUT
+
+      - name: 📝 Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.minver.outputs.version }}
+          name: v${{ steps.minver.outputs.version }}
+          body: ${{ steps.changelog.outputs.body }}
+          prerelease: ${{ contains(steps.minver.outputs.version, '-') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 🚀 Push to NuGet
         run: |
