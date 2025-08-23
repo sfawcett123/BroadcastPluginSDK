@@ -39,7 +39,7 @@ jobs:
         id: minver
         run: |
           $env:PATH += ";$env:USERPROFILE\.dotnet\tools"
-          $version = minver --tag-prefix v --default-pre-release-phase preview
+          $version = minver --tag-prefix v --default-pre-release-phase ""
           echo "Computed version: $version"
           echo "version=$version" >> $env:GITHUB_OUTPUT
 
