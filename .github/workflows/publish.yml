@@ -1,0 +1,54 @@
+name: 🚀 Publish NuGet Package
+
+on:
+  push:
+    tags:
+      - 'v*' # Trigger only on version tags like v1.2.3
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_NOLOGO: true
+  NUGET_SOURCE: https://api.nuget.org/v3/index.json
+
+jobs:
+  build-pack-publish:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - name: 🧾 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required for MinVer to access full Git history
+
+      - name: 🟢 Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: 📦 Restore
+        run: dotnet restore
+
+      - name: 🛠️ Build with MinVer
+        run: dotnet build --configuration Release /p:MinVerBuildMetadata=ci
+
+      - name: 📦 Pack with MinVer
+        run: |
+          mkdir -Force artifacts
+          dotnet pack --configuration Release --output artifacts /p:MinVerBuildMetadata=ci
+
+      - name: 🔍 Log version
+        run: |
+          $version = dotnet minver --tag-prefix v
+          Write-Host "Computed version: $version"
+
+      - name: 🚀 Push to NuGet
+        run: |
+          foreach ($file in Get-ChildItem "artifacts" -Filter *.nupkg) {
+            dotnet nuget push $file.FullName `
+              --api-key "${{ secrets.NUGET_API_KEY }}" `
+              --source "${{ env.NUGET_SOURCE }}" `
+              --skip-duplicate
+          }
