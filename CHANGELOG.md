@@ -2,7 +2,15 @@
 
 ## [Unreleased](https://github.com/SteveFawcett/BroadcastPluginSDK/tree/HEAD)
 
-[Full Changelog](https://github.com/SteveFawcett/BroadcastPluginSDK/compare/v1.0.11-preview.0.1.1...HEAD)
+[Full Changelog](https://github.com/SteveFawcett/BroadcastPluginSDK/compare/v1.0.11-preview.0.1.1.6...HEAD)
+
+**Merged pull requests:**
+
+- Remove default pre-release phase from versioning [\#16](https://github.com/SteveFawcett/BroadcastPluginSDK/pull/16) ([sfawcett123](https://github.com/sfawcett123))
+
+## [v1.0.11-preview.0.1.1.6](https://github.com/SteveFawcett/BroadcastPluginSDK/tree/v1.0.11-preview.0.1.1.6) (2025-08-23)
+
+[Full Changelog](https://github.com/SteveFawcett/BroadcastPluginSDK/compare/v1.0.11-preview.0.1.1...v1.0.11-preview.0.1.1.6)
 
 **Merged pull requests:**
 
