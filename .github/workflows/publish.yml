@@ -23,7 +23,7 @@ jobs:
   
       - name: 🛠 Install git-chglog
         run: |
-          curl -sSL https://github.com/git-chglog/git-chglog/releases/latest/download/git-chglog_linux_amd64.tar.gz -o git-chglog.tar.gz
+          curl -sSL https://github.com/git-chglog/git-chglog/releases/download/v0.15.4/git-chglog_0.15.4_linux_amd64.tar.gz -o git-chglog.tar.gz
           tar -xzf git-chglog.tar.gz
           chmod +x git-chglog
           sudo mv git-chglog /usr/local/bin/
