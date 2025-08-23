@@ -1,7 +1,5 @@
 ﻿# Test Plugin
-
-
-
+test
 ## Creating a Plugin
 Plugins are created by implementing the `IBroadcast` interface. This interface is defined in the `PluginBase` project, which is a dependency of this project.
 To create a plugin, you need to create a class that implements the `IBroadcast` interface. Here is an example of how to do this:
