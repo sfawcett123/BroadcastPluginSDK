@@ -6,6 +6,7 @@ public interface IPluginRegistry
 {
     void Add(IPlugin plugin);
     public IPlugin? Get(string shortname);
+    public IPlugin? Get(string shortname, string version);
     IReadOnlyList<IPlugin> GetAll();
     public IEnumerable<BroadcastCacheBase>? Caches();
     public IEnumerable<IProvider>? Providers();
