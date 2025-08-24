@@ -26,8 +26,10 @@ jobs:
   run_test:
     runs-on: windows-latest
     steps:
-      - name: 🧾 Checkout
-        uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
 
       - name: 🟢 Setup .NET
         uses: actions/setup-dotnet@v4
