@@ -5,6 +5,7 @@ namespace BroadcastPluginSDK.Interfaces;
 public interface IPluginRegistry
 {
     void Add(IPlugin plugin);
+    public IPlugin? Get(string shortname);
     IReadOnlyList<IPlugin> GetAll();
     public IEnumerable<BroadcastCacheBase>? Caches();
     public IEnumerable<IProvider>? Providers();
