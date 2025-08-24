@@ -14,7 +14,6 @@ env:
   NUGET_SOURCE: https://api.nuget.org/v3/index.json
 
 jobs:
-          
   build-pack-release-publish:
     runs-on: windows-latest
     defaults:
@@ -32,45 +31,20 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: 📥 Install MinVer CLI
-        run: dotnet tool install --global minver-cli
-
-      - name: 🔍 Compute Semantic Version
-        id: minver
-        run: |
-          $env:PATH += ";$env:USERPROFILE\.dotnet\tools"
-          $version = minver --tag-prefix v 
-          echo "Computed version: $version"
-          echo "version=$version" >> $env:GITHUB_OUTPUT
-
       - name: 🛠️ Build
-        run: dotnet build --configuration Release /p:MinVerBuildMetadata=ci
+        run: dotnet build --configuration Release
 
       - name: 📦 Pack
         run: |
           mkdir -Force artifacts
-          dotnet pack --configuration Release --output artifacts /p:MinVerBuildMetadata=ci
-
-      - name: 📝 Extract Changelog for Release
-        id: changelog
-        run: |
-          $version = "${{ steps.minver.outputs.version }}"
-          $lines = Get-Content CHANGELOG.md
-          $start = ($lines | Select-String "## \[$version\]").LineNumber
-          $end = ($lines | Select-String "^## \[" | Where-Object { $_.LineNumber -gt $start } | Select-Object -First 1).LineNumber
-          $length = if ($end) { $end - $start - 1 } else { $lines.Length - $start }
-          $body = $lines[$start..($start + $length)] -join "`n"
-          echo "body<<EOF" >> $env:GITHUB_OUTPUT
-          echo "$body" >> $env:GITHUB_OUTPUT
-          echo "EOF" >> $env:GITHUB_OUTPUT
+          dotnet pack --configuration Release --output artifacts
 
       - name: 📝 Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ steps.minver.outputs.version }}
-          name: v${{ steps.minver.outputs.version }}
-          body: ${{ steps.changelog.outputs.body }}
-          prerelease: ${{ contains(steps.minver.outputs.version, '-') }}
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          prerelease: ${{ contains(github.ref_name, '-') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
