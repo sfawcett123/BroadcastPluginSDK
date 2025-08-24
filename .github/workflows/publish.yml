@@ -34,10 +34,13 @@ jobs:
       - name: 🛠️ Build
         run: dotnet build --configuration Release
 
-      - name: 📦 Pack
+      - name: 📦 Pack with Tag Version
         run: |
+          $version = "${{ github.ref_name }}".TrimStart("v")
           mkdir -Force artifacts
-          dotnet pack --configuration Release --output artifacts
+          dotnet pack --configuration Release `
+            --output artifacts `
+            /p:Version=$version
 
       - name: 📝 Create GitHub Release
         uses: softprops/action-gh-release@v1
