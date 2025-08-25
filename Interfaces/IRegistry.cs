@@ -4,7 +4,8 @@ namespace BroadcastPluginSDK.Interfaces;
 
 public interface IPluginRegistry
 {
-    void Add(IPlugin plugin);
+    public bool Restart { get; set; }
+    public void Add(IPlugin plugin);
     public IPlugin? Get(string shortname);
     public IPlugin? Get(string shortname, string version);
     IReadOnlyList<IPlugin> GetAll();
